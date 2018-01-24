@@ -65,16 +65,35 @@ public class AndroidMibHash {
 						System.out.println(hmap.get(oid[k]));
 					}
 		}
-		System.out.println(k);
+		//System.out.println(k);
 
 		int j = 0;
+		TreeMap<String,String> tmap1=new TreeMap<String,String>();
+		tmap1.putAll(hmap);
+		
 		for(int i=k;i<oidsize;i++)
 		{
-			while(j<maxRepeaters) {
-				int instance=i;
-				System.out.println(hmap.get(oid[instance + j]));
-				j++;
+			String s=oid[i];
+			String substrofs=s.substring(s.length() - 5,s.length());
+			String firstparts=s.substring(0,s.length() - 5);
+			//System.out.println(substrofs);
+			//System.out.println(firstparts);
+			String substr2=substrofs.substring(0,substrofs.length()-2);
+			//System.out.println(substr2);
+			for ( String key : hmap.keySet())
+			{
+				if(j>maxRepeaters)
+				{
+					break;
+				}
+				else
+				{
+					if(key.contains(firstparts.concat(substr2)))
+						System.out.println(tmap1.get(firstparts.concat(substr2)));
+				}
 			}
+
+
 		}
 	}
 	private static void get_next_request() {
