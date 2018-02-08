@@ -59,6 +59,7 @@ public class SnmpWalk {
 				System.out.println("ipNetToMediaPhysAddress" + entry.getKey().replace(oid, "") + ": " + entry.getValue());
 			}
 		}
+		result.clear();
 		System.out.println("Another OID ? (Y/N) :");
 		option=sc.next().charAt(0);
 		}while(option=='y'||option=='Y');
