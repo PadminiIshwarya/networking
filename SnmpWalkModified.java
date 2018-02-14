@@ -35,28 +35,24 @@ public class SnmpWalkModified {
 		System.out.println("IP :");
 		ip=sc.next();
 		target=connection();
-		//System.out.println("oid1:");
-		//String oid1=sc.next();
-		String oid1="1.3.6.1.2.1.4.20.1.2";
-		String oid2="1.3.6.1.2.1.2.2.1.6";
-		String oid3="1.3.6.1.2.1.4.20.1.3";
-		String defaultRouterIfIndex="1.3.6.1.2.1.4.37.1.3";
-		String defaultRouterAddress="1.3.6.1.2.1.4.37.1.2";
-		//System.out.println("oid2:");
-		//String oid2=sc.next();
-		Map<String, String> result1= doWalk1(oid1, target);
+		String ipAddressOid="1.3.6.1.2.1.4.20.1.2";
+		String ifPhysAddressOid="1.3.6.1.2.1.2.2.1.6";
+		String ipAdEntNetMaskOid="1.3.6.1.2.1.4.20.1.3";
+		String ipDefaultRouterLifetime="1.3.6.1.2.1.4.37.1.4";
+		String subStr1="";
+		String subStr2="";
+		Map<String, String> result1= doWalk1(ipAddressOid, target);
 		for(Map.Entry<String,String> m : result1.entrySet())
 		{
 			//System.out.println("Value :" + m.getKey());
 			index1[k]=m.getValue();
-			key1[k]=m.getKey().replace(oid1 + ".", "");
+			key1[k]=m.getKey().replace(ipAddressOid + ".", "");
 			k++;
 		}
 
-		Map<String, String> result2= doWalk1(oid2, target);
-		Map<String, String> result3= doWalk1(oid3, target);
-		Map<String, String> result4= doWalk1(defaultRouterIfIndex, target);
-		Map<String, String> result5= doWalk1(defaultRouterAddress, target);
+		Map<String, String> result2= doWalk1(ifPhysAddressOid, target);
+		Map<String, String> result3= doWalk1(ipAdEntNetMaskOid, target);
+		Map<String, String> result4= doWalk1(ipDefaultRouterLifetime, target);
 
 		int count=0;
 		for(int p=0;p<index1.length;p++)
@@ -71,7 +67,7 @@ public class SnmpWalkModified {
 				{
 					try
 					{
-						if(index1[p].equals(m1.getKey().replace(oid2 + ".", "")))
+						if(index1[p].equals(m1.getKey().replace(ifPhysAddressOid + ".", "")))
 						{	
 							System.out.print("IP Index :" + index1[p] + " \t MAC :" + m1.getValue());
 							break;
@@ -84,21 +80,27 @@ public class SnmpWalkModified {
 				}
 				for(Map.Entry<String,String> m3 : result3.entrySet())
 				{
-					if(key1[p].equals(m3.getKey().replace(oid3 + ".", "")))
+					if(key1[p].equals(m3.getKey().replace(ipAdEntNetMaskOid + ".","")))
 						System.out.println("\t NET MASK :" + m3.getValue());
 				}
 				for(Map.Entry<String,String> m4 : result4.entrySet())
 				{
-					if(index1[p].equals(m4.getValue()))
+					int count1 = 0;
+					for(int i=0;i<m4.getKey().length();i++)
 					{
-						for(Map.Entry<String,String> m5 : result5.entrySet())
+						if(m4.getKey().charAt(i)=='.')
 						{
-							if(index1[p].equals(m5.getKey().replace(defaultRouterAddress + ".", "")))
+							count1++;
+							if(count==5)
 							{
-								System.out.println("Gateway :" + m5.getValue());
+								subStr1=m4.getKey().substring(i+1);
+								subStr2 = m4.getKey().substring(2, i+1);
 							}
 						}
-						
+					}
+					if(index1[p].equals(subStr1))
+					{
+						System.out.println("Default Router : "+subStr2);						
 					}
 				}
 			}
